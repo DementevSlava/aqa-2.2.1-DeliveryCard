@@ -27,7 +27,7 @@ public class DeliveryCardTest {
         form.$("[placeholder='Город']").setValue("Санкт-Петербург");
         form.$("[placeholder='Дата встречи']").doubleClick().sendKeys(formatter.format(newDate));
         form.$("[data-test-id=name] input").setValue("Имя Фамилия");
-        form.$("[data-test-id=phone]").setValue("+79815463321");
+        form.$("[data-test-id=phone]  input").setValue("+79101234567");
         form.$(".checkbox__box").click();
         $$(".button__content").find(exactText("Забронировать")).click();
         $(withText("Успешно")).waitUntil(visible, 15000);
