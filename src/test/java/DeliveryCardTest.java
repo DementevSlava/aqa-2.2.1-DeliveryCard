@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -17,7 +18,7 @@ public class DeliveryCardTest {
     SelenideElement form = $("form[class='form form_size_m form_theme_alfa-on-white']");
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         open("http://localhost:9999");
     }
 
@@ -34,9 +35,9 @@ public class DeliveryCardTest {
     }
 
     @Test
-    void shouldSubmitRequestWithDropDownList(){
-        $("[placeholder='Город']").setValue("Санк");
-        $$(".menu-item").first().click();
+    void shouldSubmitRequestWithDropDownList() {
+        $("[placeholder='Город']").setValue("Санкт-Петербург");
+        $(".menu-item__control").click();
         $("[placeholder='Дата встречи']").click();
         $(".calendar__day_state_current").click();
         $("[name=name]").setValue("Имя Фамилия");
@@ -97,4 +98,18 @@ public class DeliveryCardTest {
                 .shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
     }
 
+    @Test
+    void shouldSubmitUseCalendarTool() {
+        LocalDate week = today.plusDays(7);
+        String dayOfMonth = String.valueOf(week.getDayOfMonth());
+        form.$("[placeholder='Город']").setValue("Санкт-Петербург");
+        form.$("[data-test-id=date]").click();
+        $$("[role='gridcell']")
+                .find(exactText(dayOfMonth)).click();
+        form.$("[data-test-id=name] input").setValue("Имя Фамилия");
+        form.$("[data-test-id=phone] input").setValue("+79101234567");
+        form.$(".checkbox__box").click();
+        $$(".button__content").find(exactText("Забронировать")).click();
+        $(withText("Успешно")).waitUntil(visible, 15000);
+    }
 }
